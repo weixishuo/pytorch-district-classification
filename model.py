@@ -22,7 +22,8 @@ class ResidualBlock(nn.Module):
         self.short_cut = nn.Sequential()
         if is_first:
             self.short_cut.add_module('proj_conv',
-                                      nn.Conv2d(in_channels,out_channels, kernel_size=1, stride=proj_stride))
+                                      nn.Conv2d(in_channels,out_channels,
+                                      kernel_size=1, stride=proj_stride))
             self.short_cut.add_module('proj_bn', nn.BatchNorm2d(out_channels))
             self.short_cut.add_module('proj_relu', nn.ReLU())
 
@@ -31,7 +32,11 @@ class ResidualBlock(nn.Module):
         if pre_act:
             block.add_module(name+'_bn', nn.BatchNorm2d(in_channels))
             block.add_module(name+'_relu', nn.ReLU())
-        block.add_module(name+'conv', nn.Conv2d(in_channels, out_channels, 3, stride=stride, padding=1))
+        block.add_module(name+'conv', nn.Conv2d(in_channels,
+                                                out_channels,
+                                                3,
+                                                stride=stride,
+                                                padding=1))
 
         return block
 
@@ -71,7 +76,9 @@ class Encoder(nn.Module):
         block = nn.Sequential()
         for l in range(num_layers):
             channels = in_channels if l==0 else out_channels
-            block.add_module(name+str(l),ResidualBlock(channels, out_channels, l==0, proj_stride))
+            block.add_module(name+str(l),
+                             ResidualBlock(channels,
+                                           out_channels, l==0, proj_stride))
 
         return block
 
