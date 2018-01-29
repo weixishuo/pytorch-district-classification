@@ -1,18 +1,14 @@
 import torch
 import torchvision.transforms as transforms
 from torch.autograd import Variable
-from skimage import io
 import numpy as np
 import dlib
 import cv2
 
 TRANS = transforms.ToTensor()
 
-def district_classify(net, img_path):
-    img = io.imread(img_path)
-    if img.ndim == 2:
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-    img = img[:, :, 0:3].copy()
+def district_classify(net, img_array):
+    img = img_array[:, :, 0:3].copy()
     width = img.shape[1]
     height = img.shape[0]
     scale = max(1.0, max(width, height) / 1000.0)

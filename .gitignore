@@ -1,2 +1,3 @@
-models_20180127
+models_*
 __pycache__
+.idea

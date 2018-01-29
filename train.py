@@ -8,7 +8,7 @@ import sys
 import numpy as np
 import os
 
-def train(train_loader, val_loader, epochnum, train_args=None):
+def train(train_loader, val_loader, epochnum, save_path='.', save_freq=None):
     iter_size = len(train_loader)
     net = Encoder()
     net.cuda()
@@ -59,14 +59,10 @@ def train(train_loader, val_loader, epochnum, train_args=None):
 
         print('val_loss:{}, val_acc:{:.2%}'.format(val_loss / total, val_correct / total))
         optimizer.param_groups[0]['lr'] *= np.exp(-0.4)
-        if train_args:
-            save_freq = train_args.get('save_freq', None)
-            save_path = train_args.get('save_path', '.')
-            if save_freq and epoch % save_freq == save_freq - 1:
-                net_name = os.path.join(save_path, 'epoch_{}'.format(epoch))
-                torch.save(net, net_name)
-    save_path = train_args.get('save_path', '.') if train_args else '.'
-    torch.save(net, os.path.join(save_path, 'trained_model'))
+        if save_freq and epoch % save_freq == save_freq - 1:
+            net_name = os.path.join(save_path, 'epoch_{}'.format(epoch))
+            torch.save(net, net_name)
+    torch.save(net, os.path.join(save_path, 'trained_net'))
 
 if __name__ == "__main__":
     val_num = 3000
@@ -78,6 +74,5 @@ if __name__ == "__main__":
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=64,
                                              shuffle=True, num_workers=2)
 
-    train(train_loader, val_loader, epochnum=30,
-          train_args={'save_freq': 5,
-                      'save_path': r'/data/public/weixishuo/image-caption/models_20180127'})
+    train(train_loader, val_loader, 30,
+          save_freq=5, save_path='/data/public/weixishuo/image-caption/models_20180129')

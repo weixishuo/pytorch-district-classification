@@ -13,21 +13,21 @@ class ResidualBlock(nn.Module):
         super(ResidualBlock, self).__init__()
         # first bn_relu_conv
         if is_first:
-            self.conv1 = self._bn_conv_relu('conv1', in_channels, out_channels,
+            self.conv1 = self._bn_relu_conv('conv1', in_channels, out_channels,
                                             stride=proj_stride, pre_act=False)
         else:
-            self.conv1 = self._bn_conv_relu('conv1', in_channels, out_channels)
+            self.conv1 = self._bn_relu_conv('conv1', in_channels, out_channels)
 
-        self.conv2 = self._bn_conv_relu('conv2', out_channels, out_channels)
+        self.conv2 = self._bn_relu_conv('conv2', out_channels, out_channels)
         self.short_cut = nn.Sequential()
         if is_first:
             self.short_cut.add_module('proj_conv',
                                       nn.Conv2d(in_channels,out_channels,
                                       kernel_size=1, stride=proj_stride))
-            self.short_cut.add_module('proj_bn', nn.BatchNorm2d(out_channels))
-            self.short_cut.add_module('proj_relu', nn.ReLU())
+            #self.short_cut.add_module('proj_bn', nn.BatchNorm2d(out_channels))
+            #self.short_cut.add_module('proj_relu', nn.ReLU())
 
-    def _bn_conv_relu(self, name, in_channels, out_channels, stride=1, pre_act=True):
+    def _bn_relu_conv(self, name, in_channels, out_channels, stride=1, pre_act=True):
         block = nn.Sequential()
         if pre_act:
             block.add_module(name+'_bn', nn.BatchNorm2d(in_channels))
@@ -50,7 +50,8 @@ class Encoder(nn.Module):
     def __init__(self, training=False):
         super(Encoder, self).__init__()
         self.training = training
-        self.stage_0 = self.stage('stage_0', 3, 16, 1, 1)
+        #self.stage_0 = self.stage('stage_0', 3, 16, 1, 1)
+        self.stage_0 = nn.Conv2d(3, 16, 3, stride=1, padding=1)
         self.max_pool = nn.MaxPool2d(2)
         self.stage_1 = self.stage('stage_1', 16, 16, 3, 1)
         self.stage_2 = self.stage('stage_2', 16, 32, 4, 2)
