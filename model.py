@@ -2,11 +2,6 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-config = {
-    'weight_decay': 1e-5,
-    'bn_epsilon': 1e-4,
-}
-
 
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, is_first=True, proj_stride=2):
